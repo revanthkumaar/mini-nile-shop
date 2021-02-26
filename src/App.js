@@ -1,62 +1,98 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import * as contactAction from './actions/contactAction'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { REMOVE_CONTACT } from './actions/actionTypes';
+import * as contactAction from './actions/contactAction';
 
-class App extends Component{
-  constructor(){
+class App extends Component {
+
+  constructor(props){
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+     
     this.state = {
       name: ''
     }
-
   }
+
   handleChange(e){
     this.setState({
       name: e.target.value
     })
   }
-  //submit functionality
+
   handleSubmit(e){
     e.preventDefault();
     let contact = {
       name: this.state.name
     }
+    this.setState({
+      name: ''
+    });
     this.props.createContact(contact);
   }
 
-  deleteContact(e,index){
+  listView(data,index){
+      return(
+        <div className="row">
+          <div className="col-md-10">
+          <li key={index} className="list-group-item clearfix">
+              {data.name}
+          </li>
+          </div>
+          <div className="col-md-2">
+            <button className="btn btn-danger" onClick={(e) => this.deleteContact(e,index)}>
+              Remove Contact
+            </button>
+          </div>
+
+
+        </div>
+      )
+  }
+
+  deleteContact(e, index){
     e.preventDefault();
     this.props.deleteContact(index);
   }
 
-  render(){
-    let name;
+  render() {
+
     return(
-      <div>
-        <h1>contacts application</h1>
-        <h3>Add contact form</h3>
-        <hr/>
-      {
-        <ul>
-         {this.props.contacts.map((contact,i)=> 
-         <li key={i}>{contact.name}</li>)}
-        </ul>
+      <div className="container">
+        <h1>Clientside Contacts Application</h1>
+        <hr />
+        <div>
 
-      }
-        <form onSubmit={this.handleSubmit}>
-          <input type="text" onChange={this.handleChange}/>
-          <input type="submit" />
-        </form>
-        <button onclick={this.deleteContact}>Delete Contact</button>
+              <h3>Add contact form</h3>
 
+              <form onSubmit={this.handleSubmit}>
+                <input type="text" onChange={this.handleChange} className="form-control" value={this.state.name}/> 
+                <br/>
+                <input type="submit" className="btn btn-success" value="ADD"/>
+              </form>
+              <hr/>
+              {
+               
+                <ul className="list-group">
+
+                    {this.props.contacts.map((contact,i) => this.listView(contact,i))}
+                 
+
+
+                </ul>
+
+               
+              }
+
+        </div>
+       
       </div>
-    );
+    )
   }
 }
 
-const mapStateToProps = (state,ownProps) = {
+const mapStateToProps = (state, ownProps) => {
   return {
     contacts: state.contacts
   }
@@ -64,20 +100,9 @@ const mapStateToProps = (state,ownProps) = {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    createContact: contact => dispatch(contactAction.createContact(contact))
+    createContact: contact => dispatch(contactAction.createContact(contact)),
+    deleteContact: index =>dispatch(contactAction.deleteContact(index))
   }
-}
+};
 
-
-export default connect(mapStateToProps,mapDispatchToProps)(App);
-
-
-//connect()
-
-/*
-
-connect is a function that bridges gap between store and components
-it also provides a way to pass the state as props to 
-display data or dispatch events to redux store
-
-*/
+export default connect(mapStateToProps, mapDispatchToProps)(App);
