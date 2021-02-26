@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import * as contactAction from './actions/contactAction'
 
 class App extends Component{
   constructor(){
@@ -15,9 +17,13 @@ class App extends Component{
       name: e.target.value
     })
   }
+  //submit functionality
   handleSubmit(e){
     e.preventDefault();
-    console.log(this.state.name);
+    let contact = {
+      name: this.state.name
+    }
+    this.props.createContact(contact);
   }
 
   render(){
@@ -43,4 +49,28 @@ class App extends Component{
   }
 }
 
-export default App;
+const mapStateToProps = (state,ownProps) = {
+  return {
+    contacts: state.contacts
+  }
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    createContact: contact => dispatch(contactAction.createContact(contact))
+  }
+}
+
+
+export default connect(mapStateToProps,mapDispatchToProps)(App);
+
+
+//connect()
+
+/*
+
+connect is a function that bridges gap between store and components
+it also provides a way to pass the state as props to 
+display data or dispatch events to redux store
+
+*/

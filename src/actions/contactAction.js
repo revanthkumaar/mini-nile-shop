@@ -1,4 +1,4 @@
-import * as actionTypes from './actionType';
+import * as actionTypes from '../actions/actionTypes';
 
 export const createContact = (contact) => {
     return {
